@@ -5,20 +5,20 @@
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
-        <el-form>
-          <el-form-item>
-            <el-input placeholder="请输入手机号"></el-input>
+        <el-form ref="form" :model="loginForm" :rules="loginRules">
+          <el-form-item prop="mobile">
+            <el-input v-model="loginForm.mobile" placeholder="请输入手机号" />
           </el-form-item>
-          <el-form-item>
-            <el-input placeholder="请输入密码"></el-input>
+          <el-form-item prop="password">
+            <el-input v-model="loginForm.password" show-password placeholder="请输入密码" />
           </el-form-item>
-          <el-form-item>
-            <el-checkbox>
+          <el-form-item prop="isAgree">
+            <el-checkbox v-model="loginForm.isAgree">
               用户平台使用协议
             </el-checkbox>
           </el-form-item>
           <el-form-item>
-            <el-button style="width:350px" type="primary">登录</el-button>
+            <el-button style="width:350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -27,7 +27,53 @@
 </template>
 <script>
 export default {
-  name : "Login"
+  name: 'Login',
+  data() {
+    return {
+      loginForm: {
+        mobile: '',
+        password: '',
+        isAgree: false
+      },
+      loginRules: {
+        mobile: [{
+          required: true,
+          message: '请输入手机号',
+          trigger: 'blur'
+        }, {
+          pattern: /^1[3-9]\d{9}$/,
+          message: '手机号格式不正确',
+          trigger: 'blur'
+        }
+        ],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }, {
+          max: 10,
+          min: 6,
+          message: '密码长度异常，请输入6-10位密码',
+          trigger: 'blur'
+        }
+        ],
+        isAgree: [{
+          validator: (rule, value, callback) => {
+            value ? callback : callback(new Error('用户平台协议必须被勾选'))
+          }
+        }]
+      }
+    }
+  },
+  methods: {
+    login() {
+      this.$refs.form.validate(isOK => {
+        if (isOK) {
+          alert('校验成功')
+        }
+      })
+    }
+  }
 }
 </script>
 <style lang="scss">
