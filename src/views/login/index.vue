@@ -67,11 +67,10 @@ export default {
   },
   methods: {
     login() {
-      this.$refs.form.validate(isOK => {
-        if (isOK) {
-          alert('校验成功')
-        }
-      })
+      const isOK = this.$refs.form.validate()
+      if (isOK) {
+        alert('校验成功')
+      }
     }
   }
 }
