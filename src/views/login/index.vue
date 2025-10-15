@@ -5,6 +5,7 @@
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
+        <!-- el-form > el-form-item > el-input -->
         <el-form ref="form" :model="loginForm" :rules="loginRules">
           <el-form-item prop="mobile">
             <el-input v-model="loginForm.mobile" placeholder="请输入手机号" />
@@ -20,16 +21,12 @@
           <el-form-item>
             <el-button style="width:350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
-          <el-form-item>
-            <el-button style="width:350px" type="primary" @click="testAjax">测试</el-button>
-          </el-form-item>
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
-import request from '@/utils/request'
 export default {
   name: 'Login',
   data() {
@@ -48,22 +45,27 @@ export default {
           pattern: /^1[3-9]\d{9}$/,
           message: '手机号格式不正确',
           trigger: 'blur'
-        }
-        ],
+
+        }],
         password: [{
           required: true,
           message: '请输入密码',
           trigger: 'blur'
         }, {
-          max: 16,
           min: 6,
-          message: '密码长度异常，请输入6-16位密码',
+          max: 16,
+          message: '密码长度应该为6-16位之间',
           trigger: 'blur'
-        }
-        ],
+
+        }],
+        // required只能检测 null undefined ""
         isAgree: [{
           validator: (rule, value, callback) => {
-            value ? callback : callback(new Error('用户平台协议必须被勾选'))
+            // rule校验规则
+            // value 校验的值
+            // callback 函数 - promise resolve reject
+            // callback() callback(new Error(错误信息))
+            value ? callback() : callback(new Error('您必须勾选用户的使用协议'))
           }
         }]
       }
@@ -71,18 +73,12 @@ export default {
   },
   methods: {
     login() {
-      const isOK = this.$refs.form.validate()
-      if (isOK) {
-        this.$store.dispatch('user/login', this.loginForm)
-      }
-    },
-    testAjax() {
-      request({
-        url: 'sys/login',
-        method: 'post',
-        data: {
-          mobile: '13800000002',
-          password: `itHeiMa@${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`
+      this.$refs.form.validate(async(isOK) => {
+        if (isOK) {
+          await this.$store.dispatch('user/login', this.loginForm)
+          // Vuex 中的action 返回的promise
+          // 跳转主页
+          this.$router.push('/')
         }
       })
     }
