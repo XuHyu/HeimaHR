@@ -20,12 +20,16 @@
           <el-form-item>
             <el-button style="width:350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
+          <el-form-item>
+            <el-button style="width:350px" type="primary" @click="testAjax">测试</el-button>
+          </el-form-item>
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
+import request from '@/utils/request'
 export default {
   name: 'Login',
   data() {
@@ -51,9 +55,9 @@ export default {
           message: '请输入密码',
           trigger: 'blur'
         }, {
-          max: 10,
+          max: 16,
           min: 6,
-          message: '密码长度异常，请输入6-10位密码',
+          message: '密码长度异常，请输入6-16位密码',
           trigger: 'blur'
         }
         ],
@@ -71,6 +75,16 @@ export default {
       if (isOK) {
         this.$store.dispatch('user/login', this.loginForm)
       }
+    },
+    testAjax() {
+      request({
+        url: 'sys/login',
+        method: 'post',
+        data: {
+          mobile: '13800000002',
+          password: `itHeiMa@${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`
+        }
+      })
     }
   }
 }
