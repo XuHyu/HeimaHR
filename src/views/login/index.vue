@@ -69,7 +69,7 @@ export default {
     login() {
       const isOK = this.$refs.form.validate()
       if (isOK) {
-        alert('校验成功')
+        this.$store.dispatch('user/login', this.loginForm)
       }
     }
   }
