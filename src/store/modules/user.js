@@ -12,6 +12,9 @@ const mutations = {
     state.token = token
     setToken(token)
   },
+  removeToken(state) {
+    state.token = null
+  },
   setUserInfo(state, userInfo) {
     state.userInfo = userInfo
   }
@@ -25,6 +28,10 @@ const actions = {
   async getUserInfo(context) {
     const result = await getUserInfo()
     context.commit('setUserInfo', result)
+  },
+  logout(context) {
+    context.commit('removeToken')
+    context.commit('setUserInfo', {})
   }
 }
 
