@@ -7,3 +7,9 @@ export function login(data) {
     data
   })
 }
+
+export function getUserInfo() {
+  return requset({
+    url: '/sys/profile'
+  })
+}
