@@ -21,7 +21,7 @@
           <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
             <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a target="_blank" @click.prevent="updatePassword">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item @click.native="logout">
@@ -30,6 +30,23 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog width="500px" title="修改密码" :visible.sync="showDialog">
+      <el-form label-width="120px">
+        <el-form-item label="旧密码">
+          <el-input show-password size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码">
+          <el-input show-password size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="重复密码">
+          <el-input show-password size="small"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="mini" type="primary">确认修改</el-button>
+          <el-button size="mini">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -50,7 +67,15 @@ export default {
       'name'
     ])
   },
+  data() {
+    return {
+      showDialog: false
+    }
+  },
   methods: {
+    updatePassword() {
+      this.showDialog = true
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
