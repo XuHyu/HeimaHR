@@ -30,20 +30,20 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-dialog width="500px" title="修改密码" :visible.sync="showDialog">
-      <el-form label-width="120px">
-        <el-form-item label="旧密码">
-          <el-input show-password size="small"></el-input>
+    <el-dialog width="500px" title="修改密码" :visible.sync="showDialog" @close="btnCancel">
+      <el-form ref="passForm" label-width="120px" :model="passForm" :rules="rules">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="passForm.oldPassword" show-password size="small" />
         </el-form-item>
-        <el-form-item label="新密码">
-          <el-input show-password size="small"></el-input>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passForm.newPassword" show-password size="small" />
         </el-form-item>
-        <el-form-item label="重复密码">
-          <el-input show-password size="small"></el-input>
+        <el-form-item label="重复密码" prop="confirmPassword">
+          <el-input v-model="passForm.confirmPassword" show-password size="small" />
         </el-form-item>
         <el-form-item>
-          <el-button size="mini" type="primary">确认修改</el-button>
-          <el-button size="mini">取消</el-button>
+          <el-button @click="btnOK" size="mini" type="primary">确认修改</el-button>
+          <el-button @click="btnCancel" size="mini">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -54,11 +54,52 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { updatePassword } from '@/api/user'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      showDialog: false,
+      passForm: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      },
+      rules: {
+        oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
+        newPassword: [{ required: true, message: '新密码不能为空', trigger: 'blur' }, {
+          trigger: 'blur',
+          max: 16,
+          min: 6,
+          message: '新密码必须在6到16位之间'
+        }, {
+          trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (this.passForm.oldPassword === value) {
+              callback(new Error('新密码不允许和旧密码重复'))
+            } else {
+              callback()
+            }
+          }
+        }
+        ],
+        confirmPassword: [{ required: true, message: '重复密码不能为空', trigger: 'blur' }, {
+          trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (this.passForm.newPassword === value) {
+              callback()
+            } else {
+              callback(new Error('重复密码和新密码输入不一致'))
+            }
+          }
+        }
+        ]
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -66,11 +107,6 @@ export default {
       'avatar',
       'name'
     ])
-  },
-  data() {
-    return {
-      showDialog: false
-    }
   },
   methods: {
     updatePassword() {
@@ -82,6 +118,19 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push('/login')
+    },
+    btnOK () {
+      this.$refs.passForm.validate(async isOk => {
+        if (isOk) {
+          await updatePassword(this.passForm)
+          this.$message.success('修改密码成功')
+          this.btnCancel()
+        }
+      })
+    },
+    btnCancel () {
+      this.$refs.passForm.resetFields()
+      this.showDialog = false
     }
   }
 }

@@ -13,3 +13,11 @@ export function getUserInfo() {
     url: '/sys/profile'
   })
 }
+
+export function updatePassword(data) {
+  return requset({
+    url: '/sys/user/updatePass',
+    method: 'put',
+    data
+  })
+}
