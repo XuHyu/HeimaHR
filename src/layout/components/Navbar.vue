@@ -42,8 +42,8 @@
           <el-input v-model="passForm.confirmPassword" show-password size="small" />
         </el-form-item>
         <el-form-item>
-          <el-button @click="btnOK" size="mini" type="primary">确认修改</el-button>
-          <el-button @click="btnCancel" size="mini">取消</el-button>
+          <el-button size="mini" type="primary" @click="btnOK">确认修改</el-button>
+          <el-button size="mini" @click="btnCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -109,6 +109,19 @@ export default {
     ])
   },
   methods: {
+    btnOK() {
+      this.$refs.passForm.validate(async isOk => {
+        if (isOk) {
+          await updatePassword(this.passForm)
+          this.$message.success('修改密码成功')
+          this.btnCancel()
+        }
+      })
+    },
+    btnCancel() {
+      this.$refs.passForm.resetFields()
+      this.showDialog = false
+    },
     updatePassword() {
       this.showDialog = true
     },
@@ -118,19 +131,6 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push('/login')
-    },
-    btnOK () {
-      this.$refs.passForm.validate(async isOk => {
-        if (isOk) {
-          await updatePassword(this.passForm)
-          this.$message.success('修改密码成功')
-          this.btnCancel()
-        }
-      })
-    },
-    btnCancel () {
-      this.$refs.passForm.resetFields()
-      this.showDialog = false
     }
   }
 }
