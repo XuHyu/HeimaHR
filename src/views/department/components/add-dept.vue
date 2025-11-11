@@ -59,7 +59,10 @@ export default {
             // 部门编码校验
             trigger: 'blur',
             validator: async(rule, value, callback) => {
-              const result = await getDepartment()
+              let result = await getDepartment()
+              if (this.formData.id) {
+                result = result.filter(item => item.id !== this.formData.id)
+              }
               if (result.some(item => item.code === value)) {
                 callback(new Error('部门中已经有该编码了'))
               } else {
@@ -81,7 +84,10 @@ export default {
           {
             trigger: 'blur',
             validator: async(rule, value, callback) => {
-              const result = await getDepartment()
+              let result = await getDepartment()
+              if (this.formData.id) {
+                result = result.filter(item => item.id !== this.formData.id)
+              }
               if (result.some(item => item.name === value)) {
                 callback(new Error('部门中已经有该名称了'))
               } else {
