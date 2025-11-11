@@ -18,8 +18,8 @@
       <el-form-item>
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button @click="btnOK" type="primary" size="mini">确认</el-button>
-            <el-button @click="close" size="mini">取消</el-button>
+            <el-button type="primary" size="mini" @click="btnOK">确认</el-button>
+            <el-button size="mini" @click="close">取消</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -27,7 +27,7 @@
   </el-dialog>
 </template>
 <script>
-import { getDepartment, getManagerList, addDepartment } from '@/api/department'
+import { getDepartmentDetail, getDepartment, getManagerList, addDepartment } from '@/api/department'
 export default {
   name: 'AddDept',
   props: {
@@ -115,6 +115,9 @@ export default {
           this.close()
         }
       })
+    },
+    async getDepartmentDetail() {
+      this.formData = await getDepartmentDetail(this.currentNodeId)
     }
   }
 }
