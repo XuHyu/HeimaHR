@@ -40,11 +40,6 @@ export default {
       default: null
     }
   },
-  computed: {
-    showTitle() {
-      return this.formData.id ? '编辑部门' : '新增部门'
-    }
-  },
   data() {
     return {
       managerList: [],
@@ -102,6 +97,11 @@ export default {
           }
         ]
       }
+    }
+  },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增部门'
     }
   },
   created() {

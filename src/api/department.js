@@ -26,7 +26,6 @@ export function getDepartmentDetail(id) {
   })
 }
 
-
 export function updateDepartment(data) {
   return request({
     method: 'put',
