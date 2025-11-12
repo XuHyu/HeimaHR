@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新增部门" :visible="showDialog" @close="close">
+  <el-dialog :title="showTitle" :visible="showDialog" @close="close">
     <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item prop="name" label="部门名称">
         <el-input v-model="formData.name" placeholder="2-10个字符" style="width: 80%" size="mini" />
@@ -27,7 +27,7 @@
   </el-dialog>
 </template>
 <script>
-import { getDepartmentDetail, getDepartment, getManagerList, addDepartment } from '@/api/department'
+import { updateDepartment, getDepartmentDetail, getDepartment, getManagerList, addDepartment } from '@/api/department'
 export default {
   name: 'AddDept',
   props: {
@@ -38,6 +38,11 @@ export default {
     currentNodeId: {
       type: Number,
       default: null
+    }
+  },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增部门'
     }
   },
   data() {
@@ -104,6 +109,13 @@ export default {
   },
   methods: {
     close() {
+      this.formData = {
+        code: '',
+        introduce: '',
+        managerId: '',
+        name: '',
+        pid: ''
+      }
       this.$refs.addDept.resetFields() // 重置表单
       this.$emit('update:showDialog', false)
     },
@@ -113,11 +125,17 @@ export default {
     btnOK() {
       this.$refs.addDept.validate(async isOK => {
         if (isOK) {
-          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          let msg = '新增'
+          if (this.formData.id) {
+            msg = '编辑'
+            await updateDepartment(this.formData)
+          } else {
+            await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          }
           // 通知父组件更新
           this.$emit('updateDepartment')
           // 提示消息
-          this.$message.success(`新增部门成功`)
+          this.$message.success(`${msg}部门成功`)
           this.close()
         }
       })
